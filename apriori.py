@@ -88,22 +88,3 @@ class Apriori:
 
             
 
-
-
-
-
-
-
-#TEST
-data = []
-for i in range(7):
-    data.append(random.sample([0]*2 + [1]*4, 6))
-
-print(data)
-# Create the pandas DataFrame 
-df = pd.DataFrame(data, columns = ["Paper", "Pen", "Pencil", "Chalk" , "Crayons" , "Eraser"]) 
-print(df)
-
-
-A = Apriori(df,min_support = 0.5, min_confidence = 0.5, min_lift = 0.1, min_length = 2)
-A.fit()
