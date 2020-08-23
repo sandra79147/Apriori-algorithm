@@ -31,9 +31,15 @@ class Apriori:
         all_support[1] = self.support_dict
         for k in range(len(self.items) - 1):
             support = self.k_item_support(last,k + 2)
-            all_support[k + 2] = support
+            if bool(support) is True:
+                all_support[k + 2] = support
+            else:
+                break
             last = support
         print(all_support)
+        print("\n \n")
+        conf = self.confidence(all_support, k)
+        print(conf)
 
     def support(self,item):
         support = sum(self.transactions[item]) / self.transactions_number
@@ -53,18 +59,35 @@ class Apriori:
                 set_item = tuple(set(last_list))
                 count = 0
                 if set_item not in ksupport_dict.keys() and len(set_item) == k:
-                    count = counting_transactions(self.transactions, set_item)
+                    count = self.counting_transactions(self.transactions, set_item)
                     support = count / self.transactions_number
                     if support >= self.min_support:
                         ksupport_dict[set_item] = count / self.transactions_number
                 last_list.remove(item)
         return ksupport_dict
 
-    def counting_transactions(df, set_item):
+    def counting_transactions(self,df, set_item):
         for el in set_item:
             condition = df[el] == 1
             df = df[condition]
-        return count = len(df)
+        return len(df)
+    
+    def confidence(self,ksupport_dict, k):
+        confidence_values = {}
+        last_set = ksupport_dict[k + 1]
+        for set_items in last_set.keys():
+            size_subsets = k
+            confidence_values[set_items] = {}
+            while size_subsets>0:
+                for el in ksupport_dict[k].keys():
+                    if set(el).issubset(set(set_items)) or el in set(set_items):
+                        confidence = last_set[set_items] / ksupport_dict[k][el]
+                        confidence_values[set_items][el] = confidence
+                size_subsets = size_subsets - 1 
+        return confidence_values
+
+            
+
 
 
 
@@ -82,5 +105,5 @@ df = pd.DataFrame(data, columns = ["Paper", "Pen", "Pencil", "Chalk" , "Crayons"
 print(df)
 
 
-A = Apriori(df,min_support = 0.4, min_confidence = 0.5, min_lift = 0.1, min_length = 2)
+A = Apriori(df,min_support = 0.5, min_confidence = 0.5, min_lift = 0.1, min_length = 2)
 A.fit()
