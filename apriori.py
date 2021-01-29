@@ -45,6 +45,8 @@ class Apriori:
         support = sum(self.transactions[item]) / self.transactions_number
         if support >= self.min_support:
             return support
+        else:
+            raise SupportException
 
     def k_item_support(self,last_set_item, k):
         ksupport_dict ={}
